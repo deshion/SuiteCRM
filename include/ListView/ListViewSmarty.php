@@ -133,13 +133,18 @@ class ListViewSmarty extends ListViewDisplay
 
         $totalWidth = 0;
         foreach ((array)$this->displayColumns as $name => $params) {
-            $totalWidth += (int)$params['width'];
+            $totalWidth += isset($params['width'])? (int)$params['width'] : 0;
         }
         $adjustment = $totalWidth / 100;
 
         $contextMenuObjectsTypes = array();
         foreach ((array)$this->displayColumns as $name => $params) {
-            $this->displayColumns[$name]['width'] = floor(((int)$this->displayColumns[$name]['width']) / $adjustment);
+            if (!isset($this->displayColumns[$name]['width']) || 0 === $adjustment) {
+                $this->displayColumns[$name]['width'] = 0;
+            } else {
+                $this->displayColumns[$name]['width'] = floor(((int)$this->displayColumns[$name]['width']) / $adjustment);
+            }
+
             // figure out which contextMenu objectsTypes are required
             if (!empty($params['contextMenu']['objectType'])) {
                 $contextMenuObjectsTypes[$params['contextMenu']['objectType']] = true;
